@@ -1,0 +1,28 @@
+listen_addresses = '0.0.0.0'
+port = <%= p("database.port") %>
+#max_connections = <%= p("database.max_conncections", 500) %>
+external_pid_file = '/var/vcap/sys/run/postgres_li/postgres.pid'
+authentication_timeout = 1min
+shared_buffers = 128MB
+temp_buffers = 8MB
+
+max_files_per_process = 1000
+
+logging_collector = on
+log_directory = '/var/vcap/sys/log/postgres_li'
+log_filename = 'postgresql.log'
+#log_line_prefix = '<%= p("database.log_line_prefix") %>'
+
+#datestyle = 'iso.mdy'
+#lc_messages = 'en_US.UTF-8'
+#lc_menetary = 'en_US.UTF-8'
+#lc_numeric = 'en_US.UTF-8'
+#lc_time = 'en_US.UTF-8'
+#
+#<% if_p("database.additional_config") do |db_config| %>
+#<% db_config.each do | key, value| %>
+#<%= key %> = <%= value %>
+#<% end %>
+#<% end %>
+
+

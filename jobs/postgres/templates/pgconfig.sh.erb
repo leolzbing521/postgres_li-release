@@ -1,0 +1,23 @@
+#!/bin/bash -ex
+#current_version="9.6.4"
+pgversion_current="postgres"
+
+JOB_DIR=/var/vcap/jobs/postgres_li
+PACKAGE_DIR="/var/vcap/packages/${pgversion_current}"
+STORE_DIR=/var/vcap/store
+PG_STORE_DIR=${STORE_DIR}/postgres_li
+
+
+DATA_DIR=$PG_STORE_DIR/$pgversion_current
+DATA_DIR_PREVIOUS=$PG_STORE_DIR/postgres-previous
+
+POSTRGES_UPGRADE_LOCK=$PG_STORE_DIR/POSTGRES_UPGRADE_LOCK
+
+RUN_DIR=/var/vcap/sys/run/postgres_li
+LOG_DIR=/var/vcap/sys/log/postgres_li
+PIDFILE=$RUN_DIR/postgres.pid
+CONTROL_JOB_PIDFILE=$RUN_DIR/postgresctl.pid
+
+HOST="0.0.0.0"
+PORT="<%= p("database.port") %>"
+LD_LIBRARY_PATH="$PACKAGE_DIR/lib"

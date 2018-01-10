@@ -1,0 +1,53 @@
+---
+name: postgres_li
+
+description: "provides a single instance Postgres database that can be used with the Cloud Controller or the UAA.  does not provide highly-available configuration."
+
+templates:
+  pre_start.sh.erb: bin/pre-start
+  postgres_ctl.sh.erb: bin/postgres_ctl
+  postgres_start.sh.erb: bin/postgres_start.sh
+  pgconfig.sh.erb: bin/pgconfig.sh
+  utils.sh.erb: bin/utils.sh
+  postgresql.conf.erb: config/postgresql.conf
+
+packages:
+  - postgres
+  - postgres-common
+
+provides:
+- name: postgres
+  type: database
+  properties:
+    - database.port
+
+properties:
+
+  database.port:
+     description: "The database port"
+     default: 5432
+  database.databases:
+     description: "create database"
+     example: |
+       - name: sandbox
+       citext: true
+       - name: sandbox2
+       citext: false
+     example: |
+       - name: pgadmin
+         password: passwd
+         permissions:
+         - "CONNECTION LIMIT 33"
+       - name: bud_spencer
+         common_name: "Carlo Pedersoli"
+   
+  database.log_line_prefix:
+   default: "%m: "
+  database.monit_timeout:
+     default: 90
+  databases.trust_local_connections:
+    description: Whether to trust or not local connections. Note that vcap is always trusted.
+    default: true
+  databases.skip_data_copy_in_minor:
+    description: "If false, during a PostgreSQL minor upgrade a copy of the data directory is created."
+    default: false

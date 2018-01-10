@@ -1,0 +1,6 @@
+check process postgres_li
+  with pidfile /var/vcap/sys/run/postgres_li/postgres.pid
+  start program "/var/vcap/jobs/postgres_li/bin/postgres_ctl start"
+  as uid vcap  and gid vcap timeout <%= p("database.monit_timeout") %> seconds
+  stop program "/var/vcap/jobs/postgres_li/bin/postgres_ctl stop"
+  group vcap

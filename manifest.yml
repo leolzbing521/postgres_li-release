@@ -1,0 +1,37 @@
+---
+name: postgres_li
+releases:
+- name: postgres_li
+  version: latest
+
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: "3468.15"
+
+update:
+  canaries: 1
+  max_in_flight: 1
+  canary_watch_time: 1000-30000
+  update_watch_time: 1000-30000
+
+instance_groups:
+- name: postgres_job
+  instances: 1
+  vm_type: small-highmem
+  stemcell: default
+  networks:
+  - name: default
+  azs:
+  - z1
+  #presistent_disk_type: 5120
+  jobs:
+  - name: postgres_li
+    release: postgres_li
+    provides:
+      postgres: {as: postgres-database}
+    properties:
+     databases:
+        port: 5524
+
+     

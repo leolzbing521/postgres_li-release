@@ -1,0 +1,16 @@
+#! /bin/bash -exu
+function main(){
+    source /var/vcap/jobs/postgres_li/bin/pgconfig.sh
+    source /var/vcap/jobs/postgres_li/bin/utils.sh
+
+cp -R $JOB_DIR/config/postgresql.conf  $DATA_DIR
+#cp -R $JOB_DIR/config/postgresql.conf  $JOB_DIR/config/pg_hba.conf $JOB_DIR/config/pg_ident.conf $DATA_DIR
+echo "Starting PostgreSQL: "
+$PACKAGE_DIR/bin/pg_ctl -o "-h $HOST -p $PORT" -w  start -D $DATA_DIR -l $LOG_DIR/startup.log
+ echo "PostgreSQL started successfully"
+
+}
+ main 
+ echo "" > $CONTROL_JOB_PIDFILE
+
+

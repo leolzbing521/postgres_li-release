@@ -1,0 +1,33 @@
+#!/bin/bash -exu
+
+exec > >(tee -a >(logger -p user.info -t vcap.$(basename $0).stdout) | awk -W interactive '{ system("echo -n [$(date +\"%Y-%m-%d %H:%M:%S%z\")]"); print " " $0 }' >> /var/vcap/sys/log/postgres_li/$(basename $0).out.log)
+exec 2> >(tee -a >(logger -p user.error -t vcap.$(basename $0).stderr) | awk -W interactive '{ system("echo -n [$(date +\"%Y-%m-%d %H:%M:%S%z\")]"); print " " $0 }' >> /var/vcap/sys/log/postgres_li/$(basename $0).err.log)
+function main() {
+  local action
+  action="${1}"
+
+    source /var/vcap/jobs/postgres_li/bin/pgconfig.sh
+    set +u
+    source /var/vcap/packages/postgres-common/utils.sh
+    set -u
+case $action in
+  start)
+    pid_guard $CONTROL_JOB_PIDFILE "Postgres control job" "false"
+    echo $$ > $CONTROL_JOB_PIDFILE
+    # if [ -d $DATA_DIR -a -f $POSTGRES_UPGRADE_LOCK];then
+
+    mkdir  -p $RUN_DIR 
+    echo "" > $PIDFILE
+    pid_guard $PIDFILE "PostgreSQL"
+    exec "$JOB_DIR/bin/postgres_start.sh"
+    echo "" > $CONTROL_JOB_PIDFILE
+    ;;
+  stop)
+	su - vcap -c "${PACKAGE_DIR}/bin/pg_ctl stop -m fast -w -D ${DATA_DIR}"
+    wait_pidfile $PIDFILE
+   set -u
+   echo "stop"
+    ;;
+esac
+}
+main $1
