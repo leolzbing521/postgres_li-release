@@ -1,0 +1,44 @@
+---
+name: postgres # By convention lowercase with dashes
+icon_file: resources/postgresql_128px.png
+label: postgresql pccc
+description: postgreSQL tile
+
+packages:
+- name: postgres
+  type: bosh-release
+  path: resources/postgres-v1.0.1.tar.gz
+  jobs:
+  - name: postgres
+    single_az_only: true
+    intances: 1
+    persistent_disk: "5120"
+    vm_type: medium
+    stemcell:
+      os: ubuntu-trusty
+      version: "3445.11"
+    dynamic_ip: 1
+    templates:
+    - name: postgres
+      release: postgres
+      provides:
+        postgresnk: {as: postgres-database}
+  properties:
+    databases:
+      port: ((.properties.postgres_port.value))
+  
+forms:
+- name: config-postgreSQL
+  label: postgresql
+  description: Configure postgres
+  properties:
+  - name: postgres_port
+    type: text
+    default: 5524
+    label: Port on which  postgres will listen 
+
+stemcell_criteria:
+  os: ubuntu-trusty
+  requires_cpi: false
+  version: '3445.11'
+
